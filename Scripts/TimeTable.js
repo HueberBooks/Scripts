@@ -15,7 +15,6 @@ function loadTimeTableView() {
         $("#exerciseMenu").unbind("dialogbeforeclose");
 
         if (isOSX()) {
-        /* Changed by AR: added line-height */
             $("#exercise .textIcon a").css({"margin-top": 1, "line-height": "26px"});
         }
     };

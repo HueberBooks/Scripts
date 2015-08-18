@@ -499,7 +499,6 @@ function setExerciseAudio(exercise) {
             $("#saveaudio_btn").unbind().click(saveAudioFiles);
         }
 
-/* Changed by AR: "top": 10; previous: 0 */
         if (isOSX())
             $("#audio_elements .audioElement .audioElement_symbol span").css("top", 10);
         setExerciseContentHeader("Audio");

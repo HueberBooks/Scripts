@@ -1,6 +1,4 @@
-﻿NOCACHEPARAMETER = (new Date()).getTime();
-
-function setRightPage(page) {
+﻿function setRightPage(page) {
     $('#right_page2').html("<img usemap='#page_right' src='../Media/Lessons/L_" + page.Lesson + "/Pages/" + page.Image + "' />");
 }
 
@@ -181,7 +179,7 @@ function loadSpecificHtml(path, onComplete) {
 
 function initExerciseIndex(exercise) {
     exerciseIndex = new Array();
-    $.getJSON("../Data/Exercises.json?nocache=" + NOCACHEPARAMETER, function (data) {
+    $.getJSON(getPathToJsonFile('EXERCISES'), function (data) {
         //Set exerciseByNumber
         $(data.Exercises).each(function () {
             if (this.Lesson == exercise.Lesson) {
@@ -199,7 +197,7 @@ function loadExercise(exerciseNumber, lessonNumber, onComplete, exerciseType) {
 
     switch (exerciseType) {
         case "Exercise":
-            $.getJSON("../Data/Exercises.json?nocache=" + NOCACHEPARAMETER, function (data) {
+            $.getJSON(getPathToJsonFile('EXERCISES'), function (data) {
                 //Set exerciseByNumber
                 $(data.Exercises).each(function () {
                     if (this.Number == exerciseNumber && this.Lesson == lessonNumber) {
@@ -258,7 +256,7 @@ function loadExercise(exerciseNumber, lessonNumber, onComplete, exerciseType) {
         default:
             exerciseType = "Exercise";
 
-            $.getJSON("../Data/Exercises.json?nocache=" + NOCACHEPARAMETER, function (data) {
+            $.getJSON(getPathToJsonFile('EXERCISES'), function (data) {
                 //Set exerciseByNumber
                 $(data.Exercises).each(function () {
                     if (this.Number == exerciseNumber && this.Lesson == lessonNumber) {
@@ -328,7 +326,7 @@ function loadTextAndLoadNext(filePath, onComplete, count) {
 
 //load MainJson
 function loadExercisesJson(onSuccess) {
-    $.getJSON('../Data/Exercises.json?nocache=' + NOCACHEPARAMETER, function (data) {
+    $.getJSON(getPathToJsonFile('EXERCISES'), function (data) {
         onSuccess(data);
     }).error(function (data) {
     });

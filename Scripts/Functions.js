@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿NOCACHEPARAMETER = (new Date()).getTime();
+
+$(function () {
     detectOS();
     setTitle();
     initLessonIndex();
@@ -303,3 +305,12 @@ $(window).resize(function () {
     $('#markableContext').attr("width", $(window).width());
     $('#markableContext').attr("height", $(window).height());
 });
+
+function getPathToJsonFile(file){
+	if(digUPSettings && digUPSettings.type){
+		if(file.toUpperCase() === 'EXERCISES'){
+			return digUPSettings.exercisesJsonPath;
+		}
+	}
+	return '../Data/Exercises.json?nocache=' + NOCACHEPARAMETER;
+}
