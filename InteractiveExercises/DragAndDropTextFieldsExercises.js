@@ -49,14 +49,13 @@ function setDnDTextFieldsExerciseFunctionalities() {
 }
 
 function _innercheckAnswers() {
-    $("#restart").hide();
-    $("#set_answer").hide();
+
     if ($("#dnd_container #answerBoxes .optionBox").length > 0) {
         $("#check_answers").show();
-		//$("#set_answer").show();
+        $("#set_answer").show();
     } else {
         $("#check_answers").hide();
-        //$("#set_answer").hide();
+        $("#set_answer").hide();
     }
 }
 
@@ -66,7 +65,7 @@ function restartDnD() {
         $("#dnd_container").append($(this));
     }).sort(function () {
         return Math.floor(Math.random() * $("#dnd_container .optionBox").length);
-    }).appendTo($('#dnd_container'));;
+    }).appendTo($('#dnd_container'));
 
     $("#restart").hide();
     $("#set_answer").hide();
@@ -75,23 +74,29 @@ function restartDnD() {
 function checkAnswersDnD() {
     var containsErrors = false;
     $("#dnd_container #answerBoxes .answerBox").each(function (answerBoxIndex, answerBox) {
+        var answerBoxGroup = $(answerBox).data('boxgroup');
         $(answerBox).find(".optionBox").each(function (optionIndex, option) {
-            if (checkMatch(getBoxNumber(option), answerBox)) {
+            var optionBoxGroup = getBoxGroup(option);
+            if (
+                (!stringIsNullOrEmpty(answerBoxGroup) && !stringIsNullOrEmpty(optionBoxGroup) && answerBoxGroup === optionBoxGroup)
+                || checkMatch(getBoxNumber(option), answerBox)
+
+            ) {
                 $(option).addClass("correct");
-				$(option).removeClass("error");
-                //$("#set_answer").hide();
+                $(option).removeClass("error");
+                $("#set_answer").hide();
             } else {
                 $(option).addClass("error");
-				$(option).removeClass("correct");
+                $(option).removeClass("correct");
                 containsErrors = true;
-                //$("#set_answer").show();
+                $("#set_answer").show();
             }
         });
     });
-    if(containsErrors)
-	{
-		$("#set_answer").show();
-	}
+    //if(containsErrors)
+    {
+        $("#set_answer").show();
+    }
     $("#check_answers").hide();
     $("#restart").show();
 }
@@ -103,7 +108,12 @@ function getBoxNumber(option) {
         boxNumber = boxNumber[0].split("/");
 
     return boxNumber;
+}
 
+function getBoxGroup(option) {
+    var boxGroup = $('#dnd_container #answerBoxes .answerBox[data-boxnumber="' + getBoxNumber(option) + '"]').data('boxgroup');
+
+    return boxGroup;
 }
 
 function checkMatch(boxNumber, answerBox) {
@@ -116,27 +126,34 @@ function checkMatch(boxNumber, answerBox) {
 }
 
 function setAnswersDnD() {
-	restartDnD();
+    restartDnD();
     $("#dnd_container .optionBox").each(function () {
         var currentOptionBox = this;
-        var solutionArray = getBoxNumber(this);
-		if(solutionArray.length > 0 && solutionArray[0] == '0'){
-			$(this).each(function () {
-				$(this).removeClass("error").removeClass("correct");
-				$("#dnd_container").append($(this));
-			}).sort(function () {
-				return Math.floor(Math.random() * $("#dnd_container .optionBox").length);
-			}).appendTo($('#dnd_container'));
-		}
+        var solutionArray = getBoxNumber(currentOptionBox);
+        //var solutionBoxGroup = getBoxGroup(currentOptionBox);
+
+        if (solutionArray.length > 0 && solutionArray[0] == '0') {
+            $(this).each(function () {
+                $(this).removeClass("error").removeClass("correct");
+                $("#dnd_container").append($(this));
+            }).sort(function () {
+                return Math.floor(Math.random() * $("#dnd_container .optionBox").length);
+            }).appendTo($('#dnd_container'));
+        }
         var isSet = false;
         for (var i = 0; i < solutionArray.length; i++) {
             if (!isSet) {
-                var possibleSolutionTargets = $("#dnd_container").find(".answerBox[data-boxnumber='" + solutionArray[i] + "']");
+                var possibleSolutionTargets;
+                //if (!stringIsNullOrEmpty(solutionBoxGroup)) {
+                //    possibleSolutionTargets = $("#dnd_container").find(".answerBox[data-boxgroup='" + solutionBoxGroup + "']");
+                //} else {
+                    possibleSolutionTargets = $("#dnd_container").find(".answerBox[data-boxnumber='" + solutionArray[i] + "']");
+                //}
                 var firstUnUsed = null;
                 $(possibleSolutionTargets).each(function () {
                     //check if this answer box already is used
                     var isUsed = $(this).find(".optionBox[data-boxnumber='" + solutionArray[i] + "']").length > 0;
-                    
+
                     if (!isUsed) {
                         firstUnUsed = this;
                         return false;
@@ -144,7 +161,7 @@ function setAnswersDnD() {
                     return true;
                 });
 
-                if (firstUnUsed != null ) {
+                if (firstUnUsed != null) {
                     if (!$(currentOptionBox).hasClass('correct')) {
                         $(currentOptionBox).removeClass("error");
                         $(firstUnUsed).append(currentOptionBox);
